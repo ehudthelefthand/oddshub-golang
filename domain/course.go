@@ -20,6 +20,7 @@ func (c Course) MakeSchedule(s Schedule) Class {
 	return Class{
 		Name:     c.Name,
 		Schedule: s,
+		Trainer:  c.Trainer,
 	}
 }
 
@@ -28,6 +29,7 @@ type Class struct {
 	Attendees []Attendee
 	Schedule  Schedule
 	SendEmail func([]Email)
+	Trainer   Trainer
 }
 
 type Schedule struct {
@@ -78,7 +80,7 @@ func (c Class) makeEmailList() []Email {
 	for _, attendee := range c.Attendees {
 		emails = append(emails, Email{
 			To:   attendee.Email,
-			From: "welcome@mail.com",
+			From: c.Trainer.Email,
 		})
 	}
 	return emails
