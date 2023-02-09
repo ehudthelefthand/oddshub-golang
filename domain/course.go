@@ -62,26 +62,7 @@ func (c Class) PrepareWelcomeEmail() []Email {
 	return emails
 }
 
-func (c *Class) SetEmailSender(sendEmailFunc func([]Email)) {
-	c.SendEmail = sendEmailFunc
-}
-
 type Email struct {
 	To   string
 	From string
-}
-
-func (c Class) SendWelcomeEmail() {
-	c.SendEmail(c.makeEmailList())
-}
-
-func (c Class) makeEmailList() []Email {
-	emails := []Email{}
-	for _, attendee := range c.Attendees {
-		emails = append(emails, Email{
-			To:   attendee.Email,
-			From: c.Trainer.Email,
-		})
-	}
-	return emails
 }
