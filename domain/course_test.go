@@ -50,7 +50,7 @@ func Test_class_add_attendee_should_increase_amount_of_attendee_in_class(t *test
 	}
 }
 
-func Test_class_list_attendee_should_give_a_list_of_attendee(t *testing.T) {
+func Test_class_send_welcome_email_should_call_send_email(t *testing.T) {
 	start := time.Date(2023, 2, 13, 9, 0, 0, 0, time.Local)
 	end := time.Date(2023, 2, 17, 17, 0, 0, 0, time.Local)
 	course := domain.Course{}
@@ -69,19 +69,22 @@ func Test_class_list_attendee_should_give_a_list_of_attendee(t *testing.T) {
 		Email:     "gap@odds.team",
 	})
 
-	emails := class.PrepareWelcomeEmail()
-	if len(emails) != 2 {
-		t.Errorf("want two email to be sent")
-	}
-	expectTo := "peerawat@odds.team"
-	actualTo := emails[0].To
-	if actualTo != expectTo {
-		t.Errorf("want email to be sent to %s but got %s", expectTo, actualTo)
-	}
+	sendEmailFunc := func(emails []domain.Email) {
+		if len(emails) != 2 {
+			t.Errorf("want two email to be sent")
+		}
+		expectTo := "peerawat@odds.team"
+		actualTo := emails[0].To
+		if actualTo != expectTo {
+			t.Errorf("want email to be sent to %s but got %s", expectTo, actualTo)
+		}
 
-	expectFrom := "welcome@mail.com"
-	actualFrom := emails[0].From
-	if actualFrom != expectFrom {
-		t.Errorf("want email be sent from %s but got %s", expectFrom, actualFrom)
+		expectFrom := "welcome@mail.com"
+		actualFrom := emails[0].From
+		if actualFrom != expectFrom {
+			t.Errorf("want email be sent from %s but got %s", expectFrom, actualFrom)
+		}
 	}
+	class.SetEmailSender(sendEmailFunc)
+	class.SendWelcomeEmail()
 }
