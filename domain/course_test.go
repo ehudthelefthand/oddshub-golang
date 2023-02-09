@@ -50,7 +50,7 @@ func Test_class_add_attendee_should_increase_amount_of_attendee_in_class(t *test
 	}
 }
 
-func Test_class_send_welcome_email_should_call_send_email(t *testing.T) {
+func Test_class_prepare_welcome_email_should_return_list_of_email(t *testing.T) {
 	start := time.Date(2023, 2, 13, 9, 0, 0, 0, time.Local)
 	end := time.Date(2023, 2, 17, 17, 0, 0, 0, time.Local)
 	expectFrom := "welcome@mail.com"
