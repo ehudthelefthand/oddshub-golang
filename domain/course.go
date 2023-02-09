@@ -1,19 +1,35 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
+
+type SaveCourse func(Course) error
 
 type Course struct {
+	ID          *uint `gorm:"primaryKey"`
 	Name        string
 	Description string
 	Capacity    float64
 	Price       float64
 	Trainer     Trainer
+	saveCourse  SaveCourse `gorm:"-"`
+}
+
+func (c *Course) With(saveCourseFunc SaveCourse) {
+	c.saveCourse = saveCourseFunc
+}
+
+func (c Course) Save() error {
+	return c.saveCourse(c)
 }
 
 type Trainer struct {
+	ID        *uint `gorm:"primaryKey"`
 	FirstName string
 	LastName  string
 	Email     string
+	CourseID  *uint
 }
 
 func (c Course) MakeSchedule(s Schedule) Class {
@@ -51,18 +67,18 @@ func (c Class) AttendeeCount() int {
 	return len(c.Attendees)
 }
 
+type Email struct {
+	To   string
+	From string
+}
+
 func (c Class) PrepareWelcomeEmail() []Email {
 	emails := []Email{}
 	for _, attendee := range c.Attendees {
 		emails = append(emails, Email{
 			To:   attendee.Email,
-			From: "welcome@mail.com",
+			From: c.Trainer.Email,
 		})
 	}
 	return emails
-}
-
-type Email struct {
-	To   string
-	From string
 }
